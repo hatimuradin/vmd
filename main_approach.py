@@ -116,77 +116,20 @@ def read_csv_PM10(filename_list, trainNum, testNum, startNum, file_num, interval
 
     return all_data_checked.reshape(-1, )    
     
-def load_data_VMD(trainNum, testNum, startNum, data):
+def load_data_VMD(data, K):
     print('VMD_data loading.')
-    wvlt_lv = 8
-    # all_data_checked = data
-    targetData = data
 
-    # 处理预测信息，划分训练集和测试集
-    targetData = targetData[startNum + 1: startNum + trainNum + testNum + 1]
-    targetData = np.array(targetData).reshape(-1, 1)
+    targetData = np.array(data).reshape(-1, 1)
 
     # #归一化，每个特征分开归一化
     scaler_target = StandardScaler(copy=True, with_mean=True, with_std=True)
     targetData = scaler_target.fit_transform(targetData)
 
-    testY = targetData[trainNum: (trainNum + testNum), :]
+    # testY = targetData[trainNum: (trainNum + testNum), :]
 
-    imf_list = VMD(targetData.reshape(-1, ), 6)
+    imf_list = VMD(targetData.reshape(-1, ), K)
     imf_list = imf_list.tolist()
 
-    # coeffs = []
-    # for i in range(len(imf_list)):
-    #     imf = imf_list[i]
-    #     for j in range(len(imf)):
-    #         part_real = imf[j].real
-    #         imf[j] = part_real
-    #     coeffs.append(np.array(imf).reshape(-1, 1))
-
-    # coeffs_rest = 0
-    # for i in range(len(coeffs)):
-    #     coeffs_rest = coeffs_rest + coeffs[i]
-    # coeffs_rest = targetData - coeffs_rest
-
-    # coeffs[0] = coeffs[0] + coeffs[1]
-    # coeffs[1] = coeffs_rest
-
-    # # imf_list = VMD(coeffs_rest.reshape(-1, ), VMD_level)
-    # # imf_list = imf_list.tolist()
-    # #
-    # # coeffs = []
-    # # for i in range(len(imf_list)):
-    # #     imf = imf_list[i]
-    # #     for j in range(len(imf)):
-    # #         part_real = imf[j].real
-    # #         imf[j] = part_real
-    # #     coeffs.append(np.array(imf).reshape(-1, 1))
-
-    # # plt.figure(figsize=(19, 8))
-    # # plt.subplot(611)
-    # # plt.plot(targetData[:1000, :])
-    # # plt.subplot(612)
-    # # plt.plot(coeffs[0][:1000, :])
-    # # plt.subplot(613)
-    # # plt.plot(coeffs[1][:1000, :])
-    # # plt.subplot(614)
-    # # plt.plot(coeffs[2][:1000, :])
-    # # plt.subplot(615)
-    # # plt.plot(coeffs[3][:1000, :])
-    # # plt.subplot(616)
-    # # plt.plot(coeffs_rest[:1000, :])
-    # # plt.subplots_adjust(left=0.04, bottom=0.05, right=0.99, top=0.95, hspace=0.25)
-    # # plt.show()
-
-    # ### 测试滤波效果
-    # decomposed_data = []
-    # for i in range(len(coeffs)):
-    #     VMD_trainX, VMD_trainY, VMD_testX, VMD_testY = create_data(coeffs[i], trainNum, 4)
-    #     decomposed_data.append([VMD_trainX, VMD_trainY, VMD_testX, VMD_testY])
-
-    # print('load_data complete.\n')
-
-    # return decomposed_data, testY
     return imf_list
 
 
@@ -194,12 +137,14 @@ filename1 = "PRSA_Data_"
 filename2 = ".csv"
 filename = [filename1, filename2]
 # training number
-startNum = 1
+startNum = 0
 interval = 1
-trainNum = (24 * 1000) // interval
-testNum = ((24 * 100) // interval) + 4
-emd_decay_rate = 1.00
-
+trainNum = 35064
+testNum = 0
+K = 4
 dataset = read_csv_PM10(filename, trainNum, testNum, startNum, 1, interval)
-VMD_list = load_data_VMD(trainNum, testNum, startNum, dataset)
-np.savetxt("decomposed_data.csv", VMD_list, delimiter=",")
+np.savetxt("Y.csv", dataset, delimiter=",")
+VMD_list = load_data_VMD(dataset, K)
+transposed_VMD = list(zip(*VMD_list))
+np.savetxt("X.csv", transposed_VMD, delimiter=",")
+
