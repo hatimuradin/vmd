@@ -6,6 +6,7 @@ import xgboost as xgb
 from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import LabelEncoder
 
 
 X = pd.read_csv('X.csv')
@@ -26,6 +27,9 @@ params = {
 # instantiate the classifier 
 xgb_clf = XGBClassifier(**params)
 
+le = LabelEncoder()
+y_train = le.fit_transform(y_train)
+
 # fit the classifier to the training data
 xgb_clf.fit(X_train, y_train)
 
@@ -37,3 +41,6 @@ y_pred = xgb_clf.predict(X_test)
 
 # check accuracy score
 print('XGBoost model accuracy score: {0:0.4f}'. format(accuracy_score(y_test, y_pred)))
+
+# save predicted values to file
+np.savetxt('predicted_PM10.csv', y_pred, delimiter=",")

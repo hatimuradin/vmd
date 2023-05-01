@@ -143,8 +143,8 @@ trainNum = 35064
 testNum = 0
 K = 4
 dataset = read_csv_PM10(filename, trainNum, testNum, startNum, 1, interval)
-np.savetxt("Y.csv", dataset, delimiter=",")
+np.savetxt("Y.csv", dataset.astype(int), delimiter=",")
 VMD_list = load_data_VMD(dataset, K)
-transposed_VMD = list(zip(*VMD_list))
+transposed_VMD = list(zip(*np.real(VMD_list)))
 np.savetxt("X.csv", transposed_VMD, delimiter=",")
 
