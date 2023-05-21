@@ -21,3 +21,4 @@ threadpoolctl==3.1.0
 tzdata==2023.3
 xgboost==1.7.5
 zipp==3.15.0
+ngboost==0.4.1
