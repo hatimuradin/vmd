@@ -133,16 +133,17 @@ def load_data_VMD(data, K):
     return imf_list
 
 
-filename1 = "PRSA_Data_"
+filename1 = "data/PRSA_Data_"
 filename2 = ".csv"
+num = 12
 filename = [filename1, filename2]
 # training number
 startNum = 0
 interval = 1
-trainNum = 35064
+trainNum = 35064*num
 testNum = 0
 K = 4
-dataset = read_csv_PM10(filename, trainNum, testNum, startNum, 1, interval)
+dataset = read_csv_PM10(filename, trainNum, testNum, startNum, num, interval)
 np.savetxt("Y.csv", dataset.astype(int), delimiter=",")
 VMD_list = load_data_VMD(dataset, K)
 transposed_VMD = list(zip(*np.real(VMD_list)))
